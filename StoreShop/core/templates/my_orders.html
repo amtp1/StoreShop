@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Orders{% endblock %}
+
+{% block body %}
+<div class="container">
+  {% if orders %}
+    <h1>Мои заказы</h1>
+  {% else %}
+    <h1>Заказы не найдены</h1>
+  {% endif %}
+</div>
+{% endblock %}

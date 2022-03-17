@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title%}Cart{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+    <div class="col">
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{good.image.url}}" class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                <h6 class="card-title">{{good.title}}</h6>
+                <p class="card-text">{{good.description}}</p>
+                <p class="card-text"><small class="text-muted">К оплате: {{good.price}}₽</small></p>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="row">
+            <div class="col">
+              <input type="text" class="form-control" placeholder="Ваше имя" aria-label="First name">
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" placeholder="Ваша фамилия" aria-label="Last name">
+            </div>
+        </div>
+        <br>
+        <div class="form-floating">
+            <input type="text" class="form-control" id="floatingPhoneInput" placeholder="Номер телефона" aria-label="Last name">
+            <label for="floatingInputValue">Адрес доставки</label>
+        </div>
+        <br>
+        <div class="form-floating">
+            <input type="text" class="form-control" id="floatingAddressHomeInput" placeholder="Адрес доставки" aria-label="Last name">
+            <label for="floatingAddressHomeInput">Номер телефона</label>
+        </div>
+        <br>
+        <div class="form-floating">
+            <input type="email" class="form-control" id="floatingInputValue" placeholder="name@example.com">
+            <label for="floatingInputValue">Адрес электронной почты</label>
+        </div>
+        <br>
+        <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+                <option value="method#1">Qiwi</option>
+            </select>
+            <label for="floatingSelect">Выберите сервис для оплаты</label>
+        </div>
+    </div>
+    </div>
+  <br>
+  <button type="button" class="btn btn-outline-primary w-100">Оплатить</button>
+</div>
+{% endblock %}

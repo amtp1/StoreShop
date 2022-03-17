@@ -1,0 +1,43 @@
+body{
+    background-color: gainsboro;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+h5, h3, legend{
+    color: white;
+}
+
+#main-row{
+    height: 750px;
+}
+
+.my-custom-scrollbar {
+    position: relative;
+    height: 500px;
+    overflow: auto;
+}
+
+#orders-to-cart::-webkit-scrollbar
+{
+    width: 6px;
+    background-color: #F5F5F5;
+}
+
+#orders-to-cart::-webkit-scrollbar-thumb
+{
+    background-color: #000000;
+}
+
+.container[name="login-container"]{
+    width: 350px;
+}
+
+.container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    /*border: 0.5px solid rgba(130, 130, 130, 0.25);*/
+    /*box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 
+                0 0 0 1px rgba(0, 0, 0, 0.1);*/
+  }
