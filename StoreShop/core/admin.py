@@ -10,11 +10,11 @@ class Staffs(admin.ModelAdmin):
 
 @admin.register(Categories)
 class Categories(admin.ModelAdmin):
-    fields = ["name", "slug"]
-    list_display = ["name", "slug"]
+    fields = ["name"]
+    list_display = ["name"]
 
 
 @admin.register(Goods)
 class Goods(admin.ModelAdmin):
-    fields = ["category", "title", "slug", "image", "description", "price"]
-    list_display = ["title", "price"]
+    fields = ["category", "title", "image", "description", "price", "qty"]
+    list_display = ["title", "price", "qty"]
