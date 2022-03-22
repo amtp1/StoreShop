@@ -11,7 +11,7 @@ services:
       - POSTGRES_PASSWORD=store234
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:1917
     volumes:
       - .:/code
     ports:
