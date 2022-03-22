@@ -102,6 +102,36 @@ function clearance_of_good(id){
     });
 }
 
+function cart_decrease_value(id){
+    var data = new FormData(); // Init new FormData object.
+    var cart_item = document.getElementById(`value_${id}`);
+    var deinc_item_value = parseInt(cart_item.value) - 1;
+    if (deinc_item_value < 1){
+        alert("Значение не может быть меньше 1.");
+    }
+    else{
+        var to_pay = document.getElementById("to_pay");
+        var item_price = document.getElementById(`item_price_${id}`);
+        cart_item.value = deinc_item_value;
+        to_pay.innerText = `${parseFloat(to_pay.innerText) - parseFloat(item_price.innerText)}₽`;
+    }
+}
+
+function cart_increase_value(id){
+    var data = new FormData(); // Init new FormData object.
+    var cart_item = document.getElementById(`value_${id}`);
+    var available_qty = document.getElementById(`available_qty_${id}`);
+    var inc_item_value = parseInt(cart_item.value) + 1;
+    if (parseInt(available_qty.innerText) < inc_item_value){
+        alert("Количество товара превышает доступное количество");
+    }else{
+        var to_pay = document.getElementById("to_pay");
+        var item_price = document.getElementById(`item_price_${id}`);
+        cart_item.value = inc_item_value;
+        to_pay.innerText = `${parseFloat(to_pay.innerText) + parseFloat(item_price.innerText)}₽`;
+    }
+}
+
 $(document).ready(function () {
     $('#dtHorizontalExample').DataTable({
       "scrollX": true
