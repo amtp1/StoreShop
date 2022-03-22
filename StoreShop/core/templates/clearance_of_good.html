@@ -47,13 +47,36 @@
         <br>
         <div class="form-floating">
             <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+                <option value="method#1">Наличные</option>
                 <option value="method#1">Qiwi</option>
             </select>
-            <label for="floatingSelect">Выберите сервис для оплаты</label>
+            <label for="floatingSelect">Выберите сервис или метод для оплаты</label>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                    <label class="form-check-label" for="flexRadioDefault1">
+                    Курьерская доставка
+                    </label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                    <label class="form-check-label" for="flexRadioDefault1">
+                    Сервисы доставки
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
     </div>
   <br>
-  <button type="button" class="btn btn-outline-primary w-100">Оплатить</button>
+  <form action="/process_payment" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-primary w-100">Оплатить</button>
+  </form>
 </div>
 {% endblock %}
