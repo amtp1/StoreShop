@@ -86,7 +86,7 @@ class Web:
         if items:
             items = [Goods.objects.filter(id=k).get() for k in items]
             end_price = sum([p.price for p in items])
-        return render(request, "cart.html", dict(items=items, end_price=end_price))
+        return render(request, "cart.html", dict(items=items, end_price=int(end_price)))
 
     def add_good_to_cart(request):
         if request.user.is_authenticated:
@@ -130,9 +130,20 @@ class Web:
             request.session["items"] = None
             return HttpResponse(dumps(True), content_type="application/json")
 
+    def cart_decrease_value(request):
+        if request.user.is_authenticated:
+            return HttpResponse(dumps(True), content_type="application/json")
+
+    def cart_increase_value(request):
+        if request.user.is_authenticated:
+            return HttpResponse(dumps(True), content_type="application/json")
+
+    def process_payment(request):
+        return redirect("index")
+
     def _logout(request):
         logout(request)
-        return redirect("index") # Redirect to 'index' page.
+        return redirect("my_orders") # Redirect to 'index' page.
 
 def handler505(request):
     pass
