@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt requirements.txt
+COPY .env .env
 RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . .
