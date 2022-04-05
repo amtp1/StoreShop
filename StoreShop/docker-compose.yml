@@ -3,22 +3,16 @@ version: "3.9"
 services:
   db:
     image: postgres
+    env_file: .env
     volumes:
       - ./data/db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=store234
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:1917
+    command: python manage.py runserver 0.0.0.0:8000 # gunicorn StoreShop.wsgi:application --bind 0.0.0.0:8000
+    env_file: .env
     volumes:
       - .:/code
     ports:
       - "8000:8000"
-    environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=store234
     depends_on:
       - db
