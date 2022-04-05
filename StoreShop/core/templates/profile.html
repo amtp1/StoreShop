@@ -17,8 +17,8 @@
               </div>
               <div class="col-md-8">
                 <div class="card-body">
-                  <h6 class="card-title">{{username}}</h6>
-                  <p class="card-text"><small class="text-muted">Вступил: {{date_joined}}</small></p>
+                  <h6 class="card-title">{{user.username}}</h6>
+                  <p class="card-text"><small class="text-muted">Вступил: {{user.date_joined}}</small></p>
                   <a href="/logout" class="btn btn-danger">Выйти</a>
                 </div>
               </div>
@@ -33,7 +33,7 @@
                 <div class="col-md-12">
                 <div class="card-body">
                   <h6 class="card-title">История заказов</h6>
-                  <p class="card-text"><small class="text-muted">Количество: {{count_orders|length}}</small></p>
+                  <p class="card-text"><small class="text-muted">Количество: {{orders|length}}</small></p>
                   <a href="/my_orders" class="btn btn-primary">Перейти к заказам</a>
                 </div>
                 </div>
