@@ -4,7 +4,7 @@ body{
     overflow-y: hidden;
 }
 
-h5, h3, legend{
+h5, legend{
     color: white;
 }
 
@@ -41,3 +41,21 @@ h5, h3, legend{
     /*box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 
                 0 0 0 1px rgba(0, 0, 0, 0.1);*/
   }
+
+.table{
+    max-height:568px;
+    overflow: scroll;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+#MyOrdersTable::-webkit-scrollbar
+{
+    width: 6px;
+    background-color: #F5F5F5;
+}
+
+#MyOrdersTable::-webkit-scrollbar-thumb
+{
+    background-color: #000000;
+}
