@@ -6,6 +6,54 @@
 <div class="container">
   {% if orders %}
     <h1>Мои заказы</h1>
+    <p>
+      <div id="MyOrdersTable" class="table-wrapper-scroll-y my-custom-scrollbar">
+        <table class="table">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col" class="text-center">ID</th>
+              <th scope="col" class="text-center">Название товара</th>
+              <th scope="col" class="text-center">Цена товара</th>
+              <th scope="col" class="text-center">Статус</th>
+              <th scope="col" class="text-center">Действие</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+              <tr>
+                <td>
+                  <div class="d-flex justify-content-center">
+                    {{order.pk}}
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex justify-content-center">
+                    {{order.good.title}}
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex justify-content-center">
+                    {{order.good.price}}
+                  </div>
+                </td>
+                {% if order.status == '1' %}
+                  <td><span class="badge bg-danger w-100">Отменен</span></td>
+                {% elif order.status == '2' %}
+                  <td><span class="badge bg-warning text-dark w-100">В процессе</span></td>
+                {% elif order.status == '3' %}
+                  <td><span class="badge bg-success text-dark w-100">Завершен</span></td>
+                {% endif %}
+                <td>
+                  <div class="d-flex justify-content-center">
+                    <button id="{{order.pk}}" type="button" class="btn btn-outline-primary" onclick="more_order_info(this.id);">Подробно</button>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </p>
   {% else %}
     <h1>Заказы не найдены</h1>
   {% endif %}
