@@ -23,60 +23,68 @@
     <div class="col">
         <div class="row">
             <div class="col">
-              <input type="text" class="form-control" placeholder="Ваше имя" aria-label="First name">
+                <div class="form-floating">
+                    <input id="floatingLastNameInput" type="text" class="form-control" placeholder="Ваша фамилия" aria-label="Ваша фамилия">
+                    <label for="floatingLastNameInput">Ваша фамилия</label>
+                </div>
             </div>
             <div class="col">
-              <input type="text" class="form-control" placeholder="Ваша фамилия" aria-label="Last name">
+                <div class="form-floating">
+                    <input id="floatingFirstNameInput" type="text" class="form-control" placeholder="Ваше имя" aria-label="Ваше имя">
+                    <label for="floatingFirstNameInput">Ваше имя</label>
+                </div>
             </div>
         </div>
-        <br>
-        <div class="form-floating">
-            <input type="text" class="form-control" id="floatingPhoneInput" placeholder="Номер телефона" aria-label="Last name">
-            <label for="floatingInputValue">Адрес доставки</label>
-        </div>
-        <br>
-        <div class="form-floating">
-            <input type="text" class="form-control" id="floatingAddressHomeInput" placeholder="Адрес доставки" aria-label="Last name">
-            <label for="floatingAddressHomeInput">Номер телефона</label>
-        </div>
-        <br>
-        <div class="form-floating">
-            <input type="email" class="form-control" id="floatingInputValue" placeholder="name@example.com">
-            <label for="floatingInputValue">Адрес электронной почты</label>
-        </div>
-        <br>
-        <div class="form-floating">
-            <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
-                <option value="method#1">Наличные</option>
-                <option value="method#1">Qiwi</option>
+        <p>
+          <div class="form-floating">
+            <input id="floatingPhoneInput" type="text" class="form-control" placeholder="Номер телефона" aria-label="Номер телефона">
+            <label for="floatingPhoneInput">Номер телефона</label>
+          </div>
+        </p>
+        <p>
+          <div class="form-floating">
+            <input id="floatingAddressHomeInput" type="text" class="form-control" placeholder="Адрес доставки" aria-label="Адрес доставки">
+            <label for="floatingAddressHomeInput">Адрес доставки</label>
+          </div>
+        </p>
+        <p>
+          <div class="form-floating">
+            <input id="floatingeEmailInput" type="email" class="form-control" placeholder="name@example.com">
+            <label for="floatingeEmailInput">Адрес электронной почты</label>
+          </div>
+        </p>
+        <p>
+          <div class="form-floating">
+            <select id="floatingPaymentMethodSelect" class="form-select" aria-label="Floating label select example">
+                <option value="True">Наличные</option>
+                <option value="False">Qiwi</option>
             </select>
-            <label for="floatingSelect">Выберите сервис или метод для оплаты</label>
-        </div>
-        <br>
-        <div class="row">
+            <label for="floatingPaymentMethodSelect">Выберите сервис или метод для оплаты</label>
+          </div>
+        </p>
+        <p>
+          <div class="row">
             <div class="col">
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                    <label class="form-check-label" for="flexRadioDefault1">
+                    <input id="flexRadioDeli1" class="form-check-input" type="radio" name="flexRadioDefault" value="0">
+                    <label class="form-check-label" for="flexRadioDeli1">
                     Курьерская доставка
                     </label>
                 </div>
             </div>
             <div class="col">
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                    <label class="form-check-label" for="flexRadioDefault1">
+                    <input id="flexRadioDeli2" class="form-check-input" type="radio" name="flexRadioDefault" value="1">
+                    <label class="form-check-label" for="flexRadioDeli2">
                     Сервисы доставки
                     </label>
                 </div>
             </div>
-        </div>
+          </div>
+        </p>
     </div>
     </div>
-  <br>
-  <form action="/process_payment" method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-outline-primary w-100">Оплатить</button>
-  </form>
+    <br>
+    <button id="payment_btn" type="submit" class="btn btn-outline-primary w-100" onclick="payment_process();">Оплатить</button>
 </div>
 {% endblock %}
