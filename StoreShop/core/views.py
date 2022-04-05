@@ -1,73 +1,81 @@
 import hashlib
 from datetime import datetime as dt
-from json import dumps
+from json import dumps, loads
+from time import sleep
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from django.contrib.auth import login, logout
 
-from .models import *
+from core.models import *
 
 class Web:
     def index(request):
+        if "search_good" in request.POST:
+            good_title = request.POST["search_good"]
         return render(request, "index.html")
 
-    def auth(request):
-        if not request.user.is_authenticated:
-            message: str = ""
-            if request.POST:
-                post = request.POST
-                username = post.get("username")
-                password = post.get("password")
+    def signin(request):
+        message: str = "" # Notify message
+        
+        if request.POST:
+            # Received user data
+            email = request.POST["email"]
+            password = request.POST["password"]
 
-                hash_password: str = hashlib.md5(password.encode("utf-8")).hexdigest() # Convert password to md5 hash.
+            hash_password: str = hashlib.md5(password.encode("utf-8")).hexdigest() # Convert password to md5 hash.
+            user = User.objects.filter(email=email, password=hash_password) # Create user object from db.
+            if user.exists():
+                user = user.get() # Get user object from db.
+                user.last_login = dt.now() # Update datetime in last_login.
+                user.save() # Save changes.
+                login(request, user) # Auth user in the system.
+                return redirect("profile") # Redirect to 'profile' page.
+            else:
+                message = "Пользователь не существует" # Set message.
+        return render(request, "auth/signin.html", dict(message=message))
 
-                if not username or not password:
-                    message = "Поля не должны оставаться пустыми"
-                else:
-                    if "register-button" in request.POST:
-                        user = User.objects.filter(username=username).exists() # Check user.
-                        if not user:
-                            user = User.objects.create(username=username, password=hash_password, is_staff=True) # Create new user.
-                            login(request, user) # Auth user in the system.
-                            return redirect("profile") # Redirect to 'profile' page.
-                        else:
-                            message: str = "Пользователь с таким юзернейм существует!" # Set message.
-                            #return render(request, "login.html", dict(message=message)) # Render login page with data.
-                    elif "login-button" in request.POST:
-                        user = User.objects.filter(username=username, password=hash_password) # Create user object from db.
-                        if user.exists():
-                            user = user.get() # Get user object from db.
-                            user.last_login = dt.now() # Update datetime in last_login.
-                            user.save() # Save changes.
-                            login(request, user) # Auth user in the system.
-                            return redirect("profile") # Redirect to 'profile' page.
-                        else:
-                            message: str = "Пользователь не существует!" # Set message.
-                            #return render(request, "login.html", dict(message=message)) # Render login page with data.
+    def signup(request):
+        message: str = "" # Notify message
 
-            return render(request, "auth.html", dict(message=message))
+        if request.POST:
+            # Received user data
+            email = request.POST["email"]
+            username = request.POST["username"]
+            password = request.POST["password"]
+
+            if not email or not username or not password:
+                message = "Нужно заполнить все данные"
+            elif len(password) < 6:
+                message = "Короткий пароль"
+            else:
+                user = User.objects.filter(email=request.POST["email"])
+                if not user.exists():
+                    hash_password: str = hashlib.md5(password.encode("utf-8")).hexdigest() # Convert password to md5 hash
+                    user = User.objects.create(
+                        email=email, username=username, password=hash_password,
+                    )
+                    login(request, user) # Auth user in the system.
+                    return redirect("profile") # Redirect to 'profile' page.
+        return render(request, "auth/signup.html", dict(message=message))
 
     def profile(request):
         if not request.user.is_authenticated:
-            return redirect("auth")
+            return redirect("signin")
         else:
-            request.session["add_new_account"] = {"status": False}
             user_id = request.session["_auth_user_id"] # Get user id.
-            username: str = User.objects.get(pk=user_id).username # Get username from db by user id.
-            date_joined = User.objects.get(pk=user_id).date_joined
+            user = User.objects.get(pk=user_id)
             customer = Customers.objects.filter(user=user_id)
             if not customer.exists():
                 Customers.objects.create(user=User.objects.get(pk=user_id), phone="", address="")
             else:
                 customer = customer.get()
             orders = Orders.objects.filter(customer=customer).all()
-            data: dict = dict(username=username, date_joined=date_joined, count_orders=orders)
+            data: dict = dict(user=user, orders=orders)
             return render(request, "profile.html", data)
 
     def my_orders(request):
-        request.session["add_new_account"] = {"status": False}
         user_id = request.session["_auth_user_id"] # Get user id.
         customer = Customers.objects.filter(user=user_id).get()
         """if not customer.exists():
@@ -123,7 +131,12 @@ class Web:
 
     def clearance_of_good(request, order_id):
         good = Goods.objects.filter(id=order_id).get()
-        return render(request, "clearance_of_good.html", dict(good=good))
+        response = render(request, "clearance_of_good.html", dict(good=good))
+        response.set_cookie("order_id", good.pk)
+        return response
+
+    def clearance_from_cart(request):
+        return render(request, "clearance_from_cart.html")
 
     def remove_all_orders_from_cart(request):
         if request.user.is_authenticated:
@@ -139,11 +152,38 @@ class Web:
             return HttpResponse(dumps(True), content_type="application/json")
 
     def process_payment(request):
-        return redirect("index")
+        try:
+            user_id = request.session["_auth_user_id"]
+        except KeyError:
+            user_id = None
+        if user_id:
+            customer = Customers.objects.get(user_id=request.session["_auth_user_id"])
+        else:
+            customer = None
+        payment_response = loads(request.POST["response"])
+        good = Goods.objects.get(pk=payment_response.get("order_id"))
+        Orders.objects.create(
+            good=good, last_name=payment_response.get("floatingLastNameInput"), first_name=payment_response.get("floatingFirstNameInput"),
+            phone=payment_response.get("floatingPhoneInput"), home_address=payment_response.get("floatingAddressHomeInput"),
+            email=payment_response.get("floatingeEmailInput"), is_cash=payment_response.get("is_cash"),
+            deli_method=payment_response.get("Deli"), customer=customer
+        )
+        sleep(2)
+        return HttpResponse(dumps(True), content_type="application/json")
+
+    def order_more_info(request):
+        order = Orders.objects.get(id=request.POST["order_id"])
+        content: dict = dict(status=True, order_data=order.as_json(good=True))
+        return HttpResponse(dumps(content), content_type="application/json")
+
+    def search_good(request):
+        good = Goods.objects.filter(title__contains=request.POST["good_title"]).all()[0]
+        good_obj = dict(id=good.pk, title=good.title, image_url=good.image.url, price=int(good.price), qty=good.qty)
+        return HttpResponse(dumps(good_obj), content_type="application/json")
 
     def _logout(request):
         logout(request)
-        return redirect("my_orders") # Redirect to 'index' page.
+        return redirect("index") # Redirect to 'index' page.
 
 def handler505(request):
     pass
