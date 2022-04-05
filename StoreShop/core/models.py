@@ -1,53 +1,46 @@
-import os
-import urllib
+from datetime import datetime as dt
+from tabnanny import verbose
 
 from django.db import models
-from django.db.models.deletion import CASCADE
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.models import ContentType
-from django.core.files import File
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.core.exceptions import ValidationError
+from django.contrib.auth.models import AbstractUser
 from django .urls import reverse
 from PIL import Image
 
 User=get_user_model()
 
-"""
-def get_product_url(obj, viewname):
-    ct_model=obj.__class__.__name__
-    return reverse(viewname, kwargs={'ct_model': ct_model, 'slug':obj.
-    slug})
+choices = [
+    ('1', "Отменен"),
+    ('2', "В процессе"),
+    ('3', "Завершен"),
+]
 
-
-class LatestProductManager:
-    @staticmethod
-    def get_products_for_main_page( *args, **kwargs):
-        products=[]
-        ct_models=ContentType.objects.filter(model__in=args)
-        for ct_model in ct_models:
-            model_products=ct_model.model_class().objects.all().order_by('-id')[:5]
-            products.extend(model_products)
-        return products
-
-
-class LatesProducts:
-
-    objects=LatestProductManager()
-"""
 
 class Staffs(models.Model):
-    last_name = models.CharField(max_length=128, verbose_name="Last name")
-    first_name = models.CharField(max_length=128, verbose_name="First name")
-    position = models.CharField(max_length=128, verbose_name="Position")
-    birthday = models.DateField(verbose_name="Birthday")
-    address = models.CharField(max_length=255, verbose_name="Address")
-    phone = models.IntegerField(verbose_name="Phone")
-    note = models.TextField(verbose_name="Note")
+    staff = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_manager = models.BooleanField(null=True, verbose_name = "Менеджер по заказам")
+    is_booker = models.BooleanField(null=True, verbose_name="Бухгалтер")
+    is_merchandiser = models.BooleanField(null=True, verbose_name="Товаровед")
+
+    def __repr__(self):
+        return self.staff
 
     class Meta:
-        verbose_name = "Staff"
-        verbose_name_plural = "Staffs"
+        verbose_name = "Сотрудник"
+        verbose_name_plural = "Сотрудники"
+
+
+class Customers(models.Model):
+    user=models.ForeignKey(User, verbose_name='Заказчик', on_delete=models.CASCADE)
+    phone=models.CharField(max_length=20, verbose_name='Номер телефона')
+    address=models.CharField(max_length=255, verbose_name='Адрес')
+
+    def __str__ (self):
+        return "Customer: {} {}".format(self.user.pk, self.user.username)
+
+    class Meta:
+        verbose_name = "Заказчик"
+        verbose_name_plural = "Заказчики"
 
 
 class Categories(models.Model):
@@ -56,63 +49,73 @@ class Categories(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
-        verbose_name = "Category"
-        verbose_name_plural = "Categories"
+    class Meta: 
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
 
 
 class Goods(models.Model):
-    Min_R=(400,400)
-    Max_R=(800,800)
+    Min_R = (400,400)
+    Max_R = (800,800)
 
-    category=models.ForeignKey(Categories, verbose_name='Gategory', on_delete=models.CASCADE)
-    title=models.CharField(max_length=255, verbose_name='Title')
-    image=models.ImageField(upload_to="images/", verbose_name='Image')
-    description=models.TextField(verbose_name='Description', null=True)
-    price=models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Price')
-    qty = models.IntegerField(default=0, verbose_name="Quantity")
+    category = models.ForeignKey(Categories, verbose_name='Категория', on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, verbose_name='Название')
+    image = models.ImageField(upload_to="images/", verbose_name='Картинка')
+    description = models.TextField(verbose_name='Описание', null=True)
+    price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Цена')
+    qty = models.IntegerField(default=0, verbose_name="Количество")
 
     def __str__(self):
         return self.title
 
-    """
-    def save(self, *args, **kwargs):
-        img=Image.open(Image)
-        print(img)
-        img=self.image
-        min_height, min_width=self.Min_R
-        max_height, max_width=self.Max_R
-        if img.height < min_height or img.width < min_width:
-            raise ValidationError('Разрешение изоброжение меньше минимального ')
-        if img.height > max_height or img.width > max_width:
-            raise ValidationError('Разрешение изоброжение больше максимального ')
-        super().save(*args,**kwargs)
-    """
-
-    """
-    def save(self, *args, **kwargs):
-        if self.image:
-            #result = urllib.urlretrieve(self.image)
-            self.image.save(File(open(self.image, 'r')))
-            self.save()
-            super(Goods, self).save()
-    """
+    def as_json(self):
+        return dict(
+            category=self.category.name, title=self.title,
+            image=self.image.url, description=self.description,
+            price=float(self.price), qty=self.qty
+        )
 
     class Meta:
-        verbose_name = "Good"
-        verbose_name_plural = "Goods"
+        verbose_name = "Товар"
+        verbose_name_plural = "Товары"
 
 
 class Orders(models.Model):
-    good = models.ForeignKey(Goods, on_delete=models.CASCADE, verbose_name="Good")
-    staff = models.ForeignKey(Staffs, on_delete=models.CASCADE, verbose_name="Staff")
-    place_datetime = models.DateTimeField(auto_now_add=True, verbose_name="Place datetime")
-    complete_datetime = models.DateTimeField(auto_now_add=True, verbose_name="Complete datetime")
-    qty = models.IntegerField(verbose_name="Quantity")
-    sum = models.FloatField(verbose_name="Sum")
-    customer = models.ForeignKey('Customers', on_delete=models.CASCADE, verbose_name="Customer")
+    good = models.ForeignKey(Goods, on_delete=models.CASCADE, verbose_name="Товар")
+    last_name = models.CharField(default=None, max_length=255, verbose_name="Фамилия")
+    first_name = models.CharField(default=None, max_length=255, verbose_name="Имя")
+    phone = models.CharField(default=None, max_length=128, verbose_name="Номер телефона")
+    home_address = models.CharField(default=None, max_length=255, verbose_name="Домашний адрес")
+    email = models.CharField(default=None, max_length=255, verbose_name="Электронная почта")
+    is_cash = models.BooleanField(default=False, verbose_name="Наличные")
+    deli_method = models.IntegerField(default=0, verbose_name="Метод доставки")
+    place_datetime = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    complete_datetime = models.DateTimeField(auto_now_add=True, verbose_name="Дата завершения")
+    qty = models.IntegerField(default=1, verbose_name="Количество")
+    customer = models.ForeignKey(Customers, null=True, on_delete=models.CASCADE, verbose_name="Заказчик")
+    status = models.CharField(max_length=128, choices=choices, default='2', verbose_name="Статус")
+
+    def status_value(self):
+        return eval(self.status)[0]
+
+    def as_json(self, good: bool = False):
+        good_data = None
+        if good:
+            good_data = self.good.as_json()
+
+        return dict(good_data=good_data, last_name=self.last_name,
+            first_name=self.first_name, phone=self.phone,
+            home_address=self.home_address, email=self.email,
+            is_cash=self.is_cash, deli_method=self.deli_method,
+            qty=self.qty, status=self.status, place_datetime=self.place_datetime.strftime("%Y/%m/%d %H:%M:%S")
+        )
+
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
 
 
+"""
 class Supplies(models.Model):
     supplier = models.ForeignKey('Suppliers', on_delete=models.CASCADE, verbose_name="Supplier")
     datetime = models.DateTimeField(auto_now_add=True, verbose_name="Datetime")
@@ -123,15 +126,6 @@ class Suppliers(models.Model):
     person = models.CharField(max_length=128, verbose_name="Person")
     phone = models.IntegerField(verbose_name="Phone")
     address = models.CharField(max_length=255, verbose_name="Address")
-
-
-class Customers(models.Model):
-    user=models.ForeignKey(User, verbose_name='Customer', on_delete=models.CASCADE)
-    phone=models.CharField(max_length=20, verbose_name='Phone')
-    address=models.CharField(max_length=255, verbose_name='Address')
-
-    def __str__ (self):
-        return "Customer: {} {}".format(self.user.pk, self.user.username)
 
 
 class CartProduct(models.Model):
@@ -155,3 +149,4 @@ class Cart(models.Model):
 
     def __str__(self):
         return str(self.id)
+"""
