@@ -1,0 +1,36 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block title %}Регистрация{% endblock %}
+
+{% block body %}
+<div class="container py-5 container-fluid" style="background-color: white;" name="login-container">
+    <h2 class="mb-4"><span class="badge bg-dark w-100">Регистрация</span></h2>
+    <form method="post" action="" onsubmit="remove_message();">
+        {% csrf_token %}
+        <p>
+          <div class="form-group">
+            <input type="login" class="form-control" id="InputEmail" name="email" placeholder="Адрес электронной почты">
+          </div>
+        </p>
+        <p>
+          <div class="form-group">
+            <input type="login" class="form-control" id="InputUsername" name="username" placeholder="Имя пользователя">
+          </div>
+        </p>
+        <p>
+          <div class="form-group">
+            <input type="password" class="form-control" id="InputPassword" name="password" placeholder="Пароль">
+          </div>
+        </p>
+        {% if message %}
+            <div id="message" class="alert alert-warning" role="alert">{{message}}</div>
+        {% endif %}
+        <p><button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button></p>
+
+        <script src="https://www.google.com/recaptcha/api.js"></script>
+        <div class="g-recaptcha" data-sitekey="{{GOOGLE_RECAPTCHA_PUBLIC_KEY}}"></div>
+    </form>
+    <a href="/signin" class="link-primary">Войти в аккаунт?</a>
+    </div>
+</div>
+{% endblock %}
