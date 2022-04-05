@@ -3,6 +3,8 @@
 {% block title %}Mans{% endblock %}
 
 {% block body %}
+
+{% if goods %}
 <div class="album py-5 bg-light">
   <div class="table-wrapper-scroll-y my-custom-scrollbar">
   <div class="container">
@@ -21,7 +23,7 @@
                     <button id="{{good.pk}}" type="submit" class="btn btn-sm btn-outline-secondary">Оформить</button>
                   </form>
                   &nbsp;
-                  <button id="{{good.pk}}" type="button" class="btn btn-sm btn-outline-secondary" onclick="add_to_cart(this.id)">В корзину</button>
+                  <button id="{{good.pk}}" name="cart_btn_{{good.pk}}" type="button" class="btn btn-sm btn-outline-secondary" onclick="add_to_cart(this.id)">В корзину</button>
                 </div>
                 <small class="text-muted">Цена: {{good.price}}₽</small>
               </div>
@@ -33,4 +35,9 @@
   </div>
   </div>
 </div>
+{% else %}
+  <div class="container">
+    <h1 class="text-center">Товары не найдены</h1>
+  </div>
+{% endif %}
 {% endblock %}
