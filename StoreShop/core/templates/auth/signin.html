@@ -1,0 +1,29 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block title %}Вход{% endblock %}
+
+{% block body %}
+<div class="container py-5 container-fluid" style="background-color: white;" name="login-container">
+    <h2 class="mb-4"><span class="badge bg-dark w-100">Вход</span></h2>
+    <form method="post" action="" onsubmit="remove_message();">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="login" class="form-control" id="InputEmail" name="email" placeholder="Адрес электронной почты">
+        </div>
+        <br>
+        <div class="form-group">
+            <input type="password" class="form-control" id="InputPassword" name="password" placeholder="Пароль">
+        </div>
+        <br>
+        {% if message %}
+            <div id="message" class="alert alert-warning" role="alert">{{message}}</div>
+        {% endif %}
+        <p><button type="submit" class="btn btn-primary w-100">Войти</button></p>
+
+        <script src="https://www.google.com/recaptcha/api.js"></script>
+        <div class="g-recaptcha" data-sitekey="{{GOOGLE_RECAPTCHA_PUBLIC_KEY}}"></div>
+    </form>
+    <a href="/signup" class="link-primary">Пройти регистрацию?</a>
+    </div>
+</div>
+{% endblock %}
