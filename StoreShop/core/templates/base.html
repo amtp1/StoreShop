@@ -33,9 +33,9 @@
                 <a class="nav-link active" aria-current="page" href="/kids">Дети</a>
               </li>
             </ul>
-            <form class="d-flex">
+            <form class="d-flex" action="javascript:search_good();" method="post">
               {% csrf_token %}
-              <input class="form-control me-2" type="search" placeholder="Найти" aria-label="Search">
+              <input id="search_good" class="form-control me-2" name="search_good" type="search" placeholder="Найти" aria-label="Search">
             </form>
             <form class="d-flex" action="/cart" method="post">
               {% csrf_token %}
@@ -66,14 +66,6 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
     <script language="javascript" src="{% static 'js/main.js' %}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 </body>
-<!-- Footer -->
-<footer class="page-footer font-small blue">
-
-  <!-- Copyright -->
-  <div class="footer-copyright text-center py-3">© 2022 Copyright:
-    <a href="/"> StoreShop</a>
-  </div>
-  <!-- Copyright -->
-</footer>
 </html>
